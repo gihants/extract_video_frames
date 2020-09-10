@@ -15,10 +15,14 @@ This is a simple opencv-python script to extract images from video frames:
        -- argument "-i", "--input": path to input video file (required)
 
        -- argument "-o", "--output": name of the output folder (required)
+       
+       -- argument "-s", "--skip": number of initial frames to skip in between to control the frames per second to extract (optional)
 
-       -- argument "-s", "--skip": number of initial frames to skip (optional)
+       -- argument "-sb", "--skip_beginning": number of initial frames to skip (optional)
 
        -- argument "-f", "--frames": number of frames to extract (optional)
+       
+       
 
     example #1: 
     
