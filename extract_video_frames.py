@@ -6,7 +6,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--input", required=True, type=str, help="path to input video file")
 ap.add_argument("-o", "--output", required=True, type=str, help="output directory name")
 ap.add_argument("-s", "--skip", default = 0, type=int, help="numberframes to skip in between")
-ap.add_argument("-sb", "--skip_beginning", default = 0, type=int, help="number of initial frames to skip")
+ap.add_argument("-sb", "--skip_beginning", default = -1, type=int, help="number of initial frames to skip")
 ap.add_argument("-f", "--frames", default = -1, type=int, help="number of frames to skip")
 
 args = vars(ap.parse_args())
