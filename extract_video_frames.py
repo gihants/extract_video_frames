@@ -39,9 +39,13 @@ while success:
             cv2.imwrite(output_folder + "/frame0%d.jpg" % count, image)     # save frame as JPEG file
         else:
             cv2.imwrite(output_folder + "/frame%d.jpg" % count, image)     # save frame as JPEG file
+    else:
+         frame_instance += 1
+        
+                
         
     success,image = vidcap.read()
     print('Extracted frame {}'.format(str(count)))
     count += 1
     skipping_beginnng += 1
-    frame_instance += 1
+   
