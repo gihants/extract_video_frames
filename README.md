@@ -3,7 +3,7 @@ This is a simple opencv-python script to extract images from video frames:
 
 ## Requirements:
 - python 3+
-- opencv3+
+- OpenCV 3+
 
 ## usage
 - clone the repository: 
