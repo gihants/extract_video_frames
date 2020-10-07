@@ -29,7 +29,9 @@ frame_instance = 0
 while success:
     if (frames >= 0) and (count > frames + skip):
         break
-    if skipping_beginnng >= skip_beg and frame_instance == skip:
+    if skipping_beginnng < skip_beg:
+        break
+    if frame_instance == skip:
         frame_instance = 0
         if count < 10:
             cv2.imwrite(output_folder + "/frame000%d.jpg" % count, image)     # save frame as JPEG file       
