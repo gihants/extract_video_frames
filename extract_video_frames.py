@@ -143,7 +143,9 @@ def extract_single_video(
 def extract_video_directory(
     video_directory: str, output_folder: str, skip: int, skip_beg: int, frames: int
 ):
-    video_files = glob.glob(f"{video_directory}/*.mp4")
+    video_files = glob.glob(f"{video_directory}/*.mp4") + glob.glob(
+        f"{video_directory}/*.MP4"
+    )
     extract_params = [
         {
             "video_file": video_file,
