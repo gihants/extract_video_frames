@@ -45,8 +45,10 @@ def extract_frames_single_video_worker(extract_params: Dict):
     skip_beg = extract_params["skip_beg"]
     frames = extract_params["frames"]
 
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    video_file_name = os.path.splitext(os.path.basename(video_file))[0]
+
+    if not os.path.exists(f"{output_folder}/{video_file_name}"):
+        os.makedirs(f"{output_folder}/{video_file_name}")
 
     vidcap = cv2.VideoCapture(video_file)
     success, image = vidcap.read()
@@ -60,8 +62,8 @@ def extract_frames_single_video_worker(extract_params: Dict):
             break
         if frame_instance == skip:
             frame_instance = 0
-            video_file_name = os.path.splitext(os.path.basename(video_file))[0]
-            file_name = f"{output_folder}/{video_file_name}_frame{count:05d}.jpg"
+            
+            file_name = f"{output_folder}/{video_file_name}/{video_file_name}_frame{count:05d}.jpg"
             # file_name = f"{output_folder}/test.jpg"
             cv2.imwrite(file_name, image)
         else:
