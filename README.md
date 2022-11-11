@@ -29,7 +29,7 @@ This is a simple opencv-python script to:
     
     2. extract frames from all the *.mp4 files within a directory:
         ```sh
-        $ python ./extract_video_frames.py extract_video_directory --video_directory [video_directory] --output_folder [output_folder]--skip [skip] --skip_beg [skip_beg] --frames [frames]
+        $ python ./extract_video_frames.py extract_video_directory --video_directory [video_directory] --output_folder [output_folder]--skip [skip] --skip_beg [skip_beg] --frames [frames] --seek-tolarance [seek_tolarance]
         ```
 
        Options:
@@ -39,6 +39,7 @@ This is a simple opencv-python script to:
             --skip INTEGER        Number of frames to skip / frames per sampling point
             --skip_beg INTEGER    Number of frames to skip at the begining of the video
             --frames INTEGER      Total number of frames to extract from the video
+            --seek-tolarance INTEGER When a frame is corrupted / non-existant when read, look for some number of frames forward
 
        
     

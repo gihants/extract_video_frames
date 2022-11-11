@@ -29,11 +29,15 @@ def extract_frames_single_video(
             file_name = f"{output_folder}/{video_file_name}_frame{count:05d}.jpg"
             # file_name = f"{output_folder}/test.jpg"
             cv2.imwrite(file_name, image)
+            print("Extracted frame {}".format(file_name))
         else:
             frame_instance += 1
 
         success, image = vidcap.read()
-        print("Extracted frame {}".format(str(count)))
+        if not success:
+            success, image = vidcap.read()
+        print(success)
+        print("Reading frame {}".format(str(count)))
         count += 1
         skipping_beginnng += 1
 
@@ -44,9 +48,16 @@ def extract_frames_single_video_worker(extract_params: Dict):
     skip = extract_params["skip"]
     skip_beg = extract_params["skip_beg"]
     frames = extract_params["frames"]
+    seek_tolarance = extract_params["seek_tolarance"]
 
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    video_file_name = os.path.splitext(os.path.basename(video_file))[0]
+
+    output_video_name = f"{output_folder}/{video_file_name}.mp4"
+
+    out = cv2.VideoWriter(output_video_name, cv2.VideoWriter_fourcc(*'XVID'), 60, (1920, 1440))
+
+    if not os.path.exists(f"{output_folder}/{video_file_name}"):
+        os.makedirs(f"{output_folder}/{video_file_name}")
 
     vidcap = cv2.VideoCapture(video_file)
     success, image = vidcap.read()
@@ -64,14 +75,19 @@ def extract_frames_single_video_worker(extract_params: Dict):
             file_name = f"{output_folder}/{video_file_name}_frame{count:05d}.jpg"
             # file_name = f"{output_folder}/test.jpg"
             cv2.imwrite(file_name, image)
+            out.write(image)
         else:
             frame_instance += 1
 
         success, image = vidcap.read()
+        if not success:
+            for tolarate in range(seek_tolarance):
+                success, image = vidcap.read()
         print("Extracted frame {}".format(str(count)))
         count += 1
         skipping_beginnng += 1
-
+    vidcap.release()    
+    out.release()
 
 @click.group()
 def cli():
@@ -105,10 +121,16 @@ def cli():
     default=-1,
     help="Total number of frames to extract from the video",
 )
+@click.option(
+    "--seek-tolarance",
+    type=int,
+    default=0,
+    help="When a frame is corrupted / non-existant when read, look for some number of frames forward",
+)
 def extract_single_video(
-    video_file: str, output_folder: str, skip: int, skip_beg: int, frames: int
+    video_file: str, output_folder: str, skip: int, skip_beg: int, frames: int, seek_tolarance: int
 ):
-    extract_frames_single_video(video_file, output_folder, skip, skip_beg, frames)
+    extract_frames_single_video(video_file, output_folder, skip, skip_beg, frames, seek_tolarance)
 
 
 @cli.command(name="extract_video_directory")
@@ -140,11 +162,19 @@ def extract_single_video(
     default=-1,
     help="Total number of frames to extract from the video",
 )
+@click.option(
+    "--seek-tolarance",
+    type=int,
+    default=0,
+    help="When a frame is corrupted / non-existant when read, look for some number of frames forward",
+)
 def extract_video_directory(
-    video_directory: str, output_folder: str, skip: int, skip_beg: int, frames: int
+    video_directory: str, output_folder: str, skip: int, skip_beg: int, frames: int, seek_tolarance: int
 ):
     video_files = glob.glob(f"{video_directory}/*.mp4") + glob.glob(
         f"{video_directory}/*.MP4"
+    ) +  glob.glob(
+        f"{video_directory}/*.MOV"
     )
     extract_params = [
         {
@@ -153,11 +183,13 @@ def extract_video_directory(
             "skip": skip,
             "skip_beg": skip_beg,
             "frames": frames,
+            "seek_tolarance": seek_tolarance
         }
         for video_file in video_files
     ]
     pool = Pool(cpu_count() - 1)
     pool.map(extract_frames_single_video_worker, extract_params)
+    #[extract_frames_single_video_worker(extract_params=extract_param) for extract_param in extract_params]
 
 
 @cli.command(name="wel")
